@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class BookController extends AbstractController
 {
     /**
-     * This function dispaly all books
+     * This controller dispaly all books
      *
      * @param BookRepository $repository
      * @param PaginatorInterface $paginator
@@ -37,6 +37,14 @@ class BookController extends AbstractController
         ]);
     }
 
+
+    /**
+     * This controller  display a form to add a document
+     *
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/book/add', 'book.add', methods: ['GET', 'POST'])]
     public function new(EntityManagerInterface $manager, Request $request): Response
     {
@@ -58,10 +66,57 @@ class BookController extends AbstractController
                 'success',
                 'Document has successfully added  !'
             );
+
+            return $this->redirectToRoute('book.index');
         }
 
         return $this->render('pages/book/new.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+
+
+
+    #[Route('/book/edition/{id}', 'book.edit', methods: ['GET', 'POST'])]
+    public function edit(Book $book, Request $request, EntityManagerInterface $manager): Response
+    {
+
+
+        $form = $this->createForm(BookType::class, $book);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $book = $form->getData();
+
+            $manager->persist($book);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Document has successfully update !'
+            );
+
+            return $this->redirectToRoute('book.index');
+        }
+
+        return $this->render('pages/book/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('book/delete/{id}', 'book.delete', methods: ['GET'])]
+    public function delete(EntityManagerInterface $manager, Book $book): Response
+    {
+
+
+        $manager->remove($book);
+        $manager->flush();
+
+        $this->addFlash(
+            'success',
+            'Document deleted successfully  !'
+        );
+        return $this->redirectToRoute('book.index');
     }
 }

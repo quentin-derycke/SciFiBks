@@ -8,12 +8,21 @@
 	<div class="container mt-4">
 		{% if not books.items is same as ([]) %}
 			<h1>Sci-FiBks - Books</h1>
-			<div class="count alert alert-dismissible alert-info">
+
+
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<a href='{{ path('book.add')}}' class='btn btn-primary mt-4'>Add a new document</a>
+			<div class="count alert">
 				There is
 				{{ books.getTotalItemCount}}
 				books available
 
 			</div>
+
 			<table class="table table-hover mt-4">
 				<thead>
 					<tr>
@@ -21,6 +30,9 @@
 						<th scope="col">Name</th>
 						<th scope="col">Author</th>
 						<th scope="col">Published</th>
+						<th scope="col">Edit</th>
+						<th scope="col">Delete</th>
+
 					</tr>
 				</thead>
 				<tbody>
@@ -31,6 +43,13 @@
 							<td>{{ book.name }}</td>
 							<td>{{ book.author }}</td>
 							<td>{{ book.year|date("d-m-Y") }}</td>
+							<td>
+								<a href="{{ path('book.edit', {id: book.id} ) }}" class='btn btn-info'>Edit</a>
+							</td>
+							<td>
+								<a href="{{ path('book.delete', {id: book.id} ) }}" class='btn btn-danger'>Delete</a>
+							</td>
+
 						</tr>
 					{% endfor %}
 				</tbody>
