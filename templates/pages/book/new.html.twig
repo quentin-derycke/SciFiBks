@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+{% block title %}
+	Add a Document
+{% endblock %}
+{% block body %}
+
+	<div class='container'>
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<h1>
+			Add a new Document</h1>
+		{{ form_start(form) }}
+
+
+		<div class="form-group">
+			{{form_label(form.name)}}
+			{{form_widget(form.name)}}
+			<div class="form-error">
+				{{ form_errors(form.name) }}
+			</div>
+		</div>
+		<div class="form-group">
+			{{form_label(form.author)}}
+			{{form_widget(form.author)}}
+			<div class="form-error">
+				{{ form_errors(form.author) }}
+			</div>
+		</div>
+		<div class="form-group">
+			{{form_label(form.year)}}
+			{{form_widget(form.year)}}
+			<div class="form-error">
+				{{ form_errors(form.year) }}
+			</div>
+		</div>
+		<div class="form-group">
+			{{ form_row(form.submit) }}</div>
+	</div>
+	{{ form_end(form) }}
+</div>{% endblock %}

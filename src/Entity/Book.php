@@ -8,9 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 use App\Repository\BookRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
+#[UniqueEntity('name')]
 class Book
 {
     #[ORM\Id]
@@ -19,7 +21,7 @@ class Book
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\Length(min: 2, max: 50)]
+    #[Assert\Length(min: 1, max: 50)]
     private ?string $name = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -29,7 +31,6 @@ class Book
     private ?\DateTimeInterface $year = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    #[Assert\NotNull()]
     private ?DateTimeImmutable $createAt;
 
     /**
@@ -37,7 +38,7 @@ class Book
      */
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
+        $this->createAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

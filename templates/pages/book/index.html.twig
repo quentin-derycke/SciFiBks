@@ -1,0 +1,47 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Sci-FiBks - Books
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% if not books.items is same as ([]) %}
+			<h1>Sci-FiBks - Books</h1>
+			<div class="count alert alert-dismissible alert-info">
+				There is
+				{{ books.getTotalItemCount}}
+				books available
+
+			</div>
+			<table class="table table-hover mt-4">
+				<thead>
+					<tr>
+						<th scope="col">ID</th>
+						<th scope="col">Name</th>
+						<th scope="col">Author</th>
+						<th scope="col">Published</th>
+					</tr>
+				</thead>
+				<tbody>
+					{%   for book in books %}
+
+						<tr class="table-light">
+							<th scope="row">{{book.id}}</th>
+							<td>{{ book.name }}</td>
+							<td>{{ book.author }}</td>
+							<td>{{ book.year|date("d-m-Y") }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			<div class="navigation d-flex justify-content-center">
+				{{ knp_pagination_render(books) }}
+			</div>
+		{% else %}
+			<div class="count alert alert-dismissible alert-danger">
+				There is no books available
+			{% endif %}
+		</div>
+	{% endblock %}

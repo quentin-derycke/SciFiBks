@@ -27,8 +27,8 @@ class AppFixtures extends Fixture
             $book = new Book();
             $book->setName($this->faker->words(3, true))
                 ->setAuthor($this->faker->name())
-                ->setYear($this->faker->dateTime())
-                ->setCreateAt(date_create_immutable());
+                ->setYear($this->faker->dateTime());
+
             $manager->persist($book);
         }
         $manager->flush();
