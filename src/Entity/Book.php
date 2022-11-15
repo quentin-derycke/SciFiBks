@@ -33,6 +33,9 @@ class Book
     #[ORM\Column(type: 'datetime_immutable')]
     private ?DateTimeImmutable $createAt;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $resume = null;
+
     /**
      * Constructor
      */
@@ -90,6 +93,18 @@ class Book
     public function setCreateAt(\DateTimeImmutable $createAt): self
     {
         $this->createAt = $createAt;
+
+        return $this;
+    }
+
+    public function getResume(): ?string
+    {
+        return $this->resume;
+    }
+
+    public function setResume(?string $resume): self
+    {
+        $this->resume = $resume;
 
         return $this;
     }
