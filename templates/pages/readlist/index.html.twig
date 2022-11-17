@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Sci-FiBks - Readlist
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% if not readlists.items is same as ([]) %}
+			<h1>Sci-FiBks - Readlist</h1>
+
+
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+	<a href='{{ path('readlist.add')}}' class='btn btn-primary mt-4'>Add a new document</a>
+			<div class="count alert">
+			<div class="count alert">
+				There is
+				{{ readlists.getTotalItemCount}}
+				Lists available
+
+			</div>
+
+			<table class="table table-hover mt-4">
+				<thead>
+					<tr>
+						<th scope="col">ID</th>
+						<th scope="col">Name</th>
+						<th scope="col">Description</th>
+						<th scope="col">Creation date</th>
+						<th scope="col">Edit</th>
+						<th scope="col">Delete</th>
+
+
+
+
+					</tr>
+				</thead>
+				<tbody>
+					{%   for readlist in readlists %}
+
+						<tr class="table-light">
+							<th scope="row">{{readlist.id}}</th>
+							<td>{{ readlist.name }}</td>
+							<td>{{ readlist.description }}</td>
+							<td>{{ readlist.updatedAt|date("d-m-Y") }}</td>			<td>
+								<a href="{{ path('readlist.edit', {id: readlist.id} ) }}" class='btn btn-info'>Edit</a>
+							</td>
+							<td>
+								<a href="{{ path('readlist.delete', {id: readlist.id} ) }}" class='btn btn-danger'>Delete</a>
+							</td>
+
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			<div class="navigation d-flex justify-content-center">
+				{{ knp_pagination_render(readlists) }}
+			</div>
+		{% else %}
+			<div class="count alert alert-dismissible alert-danger">
+				There is no lists available
+			{% endif %}
+		</div>
+	{% endblock %}

@@ -77,6 +77,13 @@ class BookController extends AbstractController
 
 
 
+    /**
+     * This controller  display a form to edit a document
+     *
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return Response
+     */
 
     #[Route('/book/edition/{id}', 'book.edit', methods: ['GET', 'POST'])]
     public function edit(Book $book, Request $request, EntityManagerInterface $manager): Response
@@ -105,6 +112,15 @@ class BookController extends AbstractController
         ]);
     }
 
+
+
+    /**
+     * This controller  display a form to delete a document
+     *
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return Response
+     */
     #[Route('book/delete/{id}', 'book.delete', methods: ['GET'])]
     public function delete(EntityManagerInterface $manager, Book $book): Response
     {
