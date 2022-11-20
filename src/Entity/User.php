@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 
 
@@ -24,16 +24,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
-    #[Assert\Length(min:2, max :50)]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $fullName = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Assert\Length(min:2, max :50)]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email()]
-    #[Assert\Length(min:2, max :180)]
+    #[Assert\Length(min: 2, max: 180)]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -45,20 +45,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\NotBlank()]
-    private ?string $password = null;
+    private ?string $password = 'password';
 
     private ?string $plainPassword = null;
 
- 
+
 
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
-public function __construct()
-{
-     $this->createdAt = new \DateTimeImmutable();
-}
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
 
 
@@ -145,9 +145,9 @@ public function __construct()
 
         return $this;
     }
-        /**
+    /**
      * Get the value of plainPassword
-     */ 
+     */
     public function getPlainPassword()
     {
         return $this->plainPassword;
@@ -157,7 +157,7 @@ public function __construct()
      * Set the value of plainPassword
      *
      * @return  self
-     */ 
+     */
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
@@ -174,7 +174,7 @@ public function __construct()
         // $this->plainPassword = null;
     }
 
-  
+
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -187,6 +187,4 @@ public function __construct()
 
         return $this;
     }
-
-
 }
