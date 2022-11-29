@@ -28,7 +28,7 @@ class ReadlistController extends AbstractController
     public function index(ReadlistRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
         $readlists= $paginator->paginate(
-            $repository->findAll(), /* query */
+            $repository->findBy(['user' =>$this->getUser()]), /* query */
             $request->query->getInt('page', 1), /*page number*/
             10 /*limit per page*/
         );
@@ -55,7 +55,7 @@ class ReadlistController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
            $readlist = $form->getData();
-
+            $readlist->setUser($this->getUser());
            $manager->persist($readlist);
            $manager->flush();
 

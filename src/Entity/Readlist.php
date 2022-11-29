@@ -43,6 +43,10 @@ class Readlist
     #[ORM\ManyToMany(targetEntity: Book::class)]
     private Collection $books;
 
+    #[ORM\ManyToOne(inversedBy: 'readlists')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->books = new ArrayCollection();
@@ -143,6 +147,18 @@ class Readlist
     public function removeBook(book $book): self
     {
         $this->books->removeElement($book);
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

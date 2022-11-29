@@ -9,7 +9,7 @@ use Faker\Generator;
 use App\Entity\Readlist;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 
 class AppFixtures extends Fixture
 {
@@ -28,6 +28,21 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+
+        
+         // Users
+         $users = [];
+         for($i = 0; $i< 10; $i++) {
+            $user = new User();
+            $user->setFullName($this->faker->name())
+            ->setPseudo(mt_rand(0,1) === 1 ? $this->faker->firstName() : null)
+            ->setEmail($this->faker->email())
+            ->setRoles(['ROLE_USER'])
+            ->setPlainPassword('password');
+            $users[] = $user;
+            $manager->persist($user);
+            
+                     }
         // Books
         $books = [];
         for ($i = 0; $i < 50; $i++) {
@@ -35,7 +50,8 @@ class AppFixtures extends Fixture
             $book->setName($this->faker->words(3, true))
                 ->setAuthor($this->faker->name())
                 ->setYear($this->faker->dateTime())
-            ->setResume($this->faker->paragraph());
+            ->setResume($this->faker->paragraph())
+            ->setUser($users[mt_rand(0, count($users) - 1)]);
             $books[] = $book;
             $manager->persist($book);
         }
@@ -45,8 +61,8 @@ class AppFixtures extends Fixture
     $readlist = new Readlist();
     $readlist->setName($this->faker->word())
     ->setDescription($this->faker->paragraph())
-    ->setIsFavorite($this->faker->boolean());
-    
+    ->setIsFavorite($this->faker->boolean())
+    ->setUser($users[mt_rand(0, count($users) - 1)]);
     for ($k=0; $k < mt_rand(5,15); $k ++){
         $readlist->addBook($books[mt_rand(0, count($books) - 1 )]);
     }
@@ -54,18 +70,6 @@ class AppFixtures extends Fixture
 
         }
 
-         // Users 
-         for($i = 0; $i< 10; $i++) {
-$user = new User();
-$user->setFullName($this->faker->name())
-->setPseudo(mt_rand(0,1) === 1 ? $this->faker->firstName() : null)
-->setEmail($this->faker->email())
-->setRoles(['ROLE_USER'])
-->setPlainPassword('password');
-
-$manager->persist($user);
-
-         }
         $manager->flush();
     }
 }

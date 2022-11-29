@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -58,11 +60,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Book::class, orphanRemoval: true)]
+    private Collection $books;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Readlist::class, orphanRemoval: true)]
+    private Collection $readlists;
+
 
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->books = new ArrayCollection();
+        $this->readlists = new ArrayCollection();
     }
 
 
@@ -201,6 +211,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Book>
+     */
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+    public function addBook(Book $book): self
+    {
+        if (!$this->books->contains($book)) {
+            $this->books->add($book);
+            $book->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBook(Book $book): self
+    {
+        if ($this->books->removeElement($book)) {
+            // set the owning side to null (unless already changed)
+            if ($book->getUser() === $this) {
+                $book->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Readlist>
+     */
+    public function getReadlists(): Collection
+    {
+        return $this->readlists;
+    }
+
+    public function addReadlist(Readlist $readlist): self
+    {
+        if (!$this->readlists->contains($readlist)) {
+            $this->readlists->add($readlist);
+            $readlist->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReadlist(Readlist $readlist): self
+    {
+        if ($this->readlists->removeElement($readlist)) {
+            // set the owning side to null (unless already changed)
+            if ($readlist->getUser() === $this) {
+                $readlist->setUser(null);
+            }
+        }
 
         return $this;
     }

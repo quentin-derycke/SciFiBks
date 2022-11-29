@@ -28,7 +28,7 @@ class BookController extends AbstractController
     {
 
         $books = $paginator->paginate(
-            $repository->findAll(), /* query */
+            $repository->findby(['user' => $this->getUser()]), /* query */
             $request->query->getInt('page', 1), /*page number*/
             10 /*limit per page*/
         );
@@ -58,7 +58,7 @@ class BookController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $book = $form->getData();
-
+            $book->setUser($this->getUser());
             $manager->persist($book);
             $manager->flush();
 
