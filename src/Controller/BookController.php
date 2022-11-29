@@ -6,11 +6,12 @@ use App\Entity\Book;
 use App\Form\BookType;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BookController extends AbstractController
@@ -24,6 +25,7 @@ class BookController extends AbstractController
      * @return Response
      */
     #[Route('/book', name: 'book.index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function index(BookRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
 
@@ -46,6 +48,7 @@ class BookController extends AbstractController
      * @return Response
      */
     #[Route('/book/add', 'book.add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(EntityManagerInterface $manager, Request $request): Response
     {
 
@@ -86,6 +89,7 @@ class BookController extends AbstractController
      */
 
     #[Route('/book/edition/{id}', 'book.edit', methods: ['GET', 'POST'])]
+    #[Security("is_granted('ROLE_USER') and user === book.getUser()")]
     public function edit(Book $book, Request $request, EntityManagerInterface $manager): Response
     {
 

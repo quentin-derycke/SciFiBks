@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Readlist;
 use App\Form\BookType;
+use App\Entity\Readlist;
 use App\Form\ReadlistType;
 use App\Repository\ReadlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +11,8 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ReadlistController extends AbstractController
@@ -25,6 +27,7 @@ class ReadlistController extends AbstractController
      * @return Response
      */
     #[Route('/readlist', name: 'readlist.index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function index(ReadlistRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
         $readlists= $paginator->paginate(
@@ -46,6 +49,7 @@ class ReadlistController extends AbstractController
      * @return Response
      */
     #[Route('/readlist/add', name: 'readlist.add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(EntityManagerInterface $manager, Request $request): Response
     {
         $readlist = new Readlist();
@@ -115,6 +119,7 @@ class ReadlistController extends AbstractController
      * @param Request $request
      * @return Response
      */
+    #[Security("is_granted('ROLE_USER') and user === readlist.getUser()")]
     #[Route('readlist/delete/{id}', 'readlist.delete', methods: ['GET'])]
     public function delete(EntityManagerInterface $manager, Readlist $readlist): Response
     {
