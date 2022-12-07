@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Sci-FiBks - Readlist
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% if not readlists.items is same as ([]) %}
+			<h1>Sci-FiBks - Readlist Share</h1>
+
+
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+	<a href='{{ path('readlist.add')}}' class='btn btn-primary mt-4'>Add a new List</a>
+			<div class="count alert">
+			<div class="count alert">
+				There is
+				{{ readlists.getTotalItemCount}}
+				Lists available
+
+			</div>
+            <div class="gap-4 row mt-4  align-items-center justify-content-center">
+					{%   for readlist in readlists %}
+
+						<div class="card border-warning mb-3" style="max-width: 20rem;">
+                <div class="card-header"> {{readlist.user.fullName}}</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{readlist.name}}</h4>
+                    <p class="card-text">{{readlist.description |slice(0, 100) ~ '...'}}</p>
+                </div>
+                </div>
+					{% endfor %}
+                    </div>
+				
+
+			<div class="navigation d-flex justify-content-center">
+				{{ knp_pagination_render(readlists) }}
+			</div>
+		{% else %}
+			<div class="count alert alert-dismissible alert-danger">
+				There is no lists available
+			{% endif %}
+		</div>
+	{% endblock %}

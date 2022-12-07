@@ -30,8 +30,8 @@ class ReadlistController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function index(ReadlistRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
-        $readlists= $paginator->paginate(
-            $repository->findBy(['user' =>$this->getUser()]), /* query */
+        $readlists = $paginator->paginate(
+            $repository->findBy(['user' => $this->getUser()]), /* query */
             $request->query->getInt('page', 1), /*page number*/
             10 /*limit per page*/
         );
@@ -39,8 +39,31 @@ class ReadlistController extends AbstractController
             'readlists' => $readlists
         ]);
     }
+    #[Route('/readlist/public', name: 'readlist.public', methods: ['GET'])]
+public function indexPublic(PaginatorInterface $paginator, ReadlistRepository $repository, Request $request) : Response {
+
+    $readlists = $paginator->paginate($repository->findPublicReadlist(null));
+
+    return $this->render('pages/readlist/index_public.html.twig',[
+        'readlists' => $readlists,
+        $request->query->getInt('page', 1), /*page number*/
+        10 /*limit per page*/
+    ]);
+
+}
 
 
+/**
+ * This controller allow to see readlist in  public state visibility
+ */
+#[Security("is_granted('ROLE_USER') and readlist.isIsPublic() === true")]
+    #[Route('/readlist/{id}', name: 'readlist.show', methods: ['GET'])]
+    public function show(Readlist $readlist): Response
+    {
+        return $this->render('pages/readlist/show.html.twig',[
+            'readlist' => $readlist
+]);
+    }
     /**
      * This controller allow us to create a new readlist 
      *
@@ -54,26 +77,26 @@ class ReadlistController extends AbstractController
     {
         $readlist = new Readlist();
         $form = $this->createForm(ReadlistType::class, $readlist);
+
+
         $form->handleRequest($request);
-
-
-        if($form->isSubmitted() && $form->isValid()) {
-           $readlist = $form->getData();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $readlist = $form->getData();
             $readlist->setUser($this->getUser());
-           $manager->persist($readlist);
-           $manager->flush();
+            $manager->persist($readlist);
+            $manager->flush();
 
-           $this->addFlash(
-            'success',
-            'List  successfully created  !'
-        );
+            $this->addFlash(
+                'success',
+                'List  successfully created  !'
+            );
 
 
-           return $this->redirectToRoute('readlist.index');
+            return $this->redirectToRoute('readlist.index');
         }
-      return $this->render('pages/readlist/new.html.twig', [
-        'form' =>  $form->createView()
-      ]);
+        return $this->render('pages/readlist/new.html.twig', [
+            'form' =>  $form->createView()
+        ]);
     }
 
     /**
@@ -135,5 +158,3 @@ class ReadlistController extends AbstractController
         return $this->redirectToRoute('readlist.index');
     }
 }
-
-

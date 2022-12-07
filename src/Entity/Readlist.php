@@ -33,6 +33,8 @@ class Readlist
     private ?bool $isFavorite = null;
 
     #[ORM\Column]
+    private ?bool $isPublic = null;
+    #[ORM\Column]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -46,6 +48,8 @@ class Readlist
     #[ORM\ManyToOne(inversedBy: 'readlists')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+ 
 
     public function __construct()
     {
@@ -99,6 +103,18 @@ class Readlist
     public function setIsFavorite(bool $isFavorite): self
     {
         $this->isFavorite = $isFavorite;
+
+        return $this;
+    }
+    
+    public function isIsPublic(): ?bool
+    {
+        return $this->isPublic;
+    }
+
+    public function setIsPublic(bool $isPublic): self
+    {
+        $this->isPublic = $isPublic;
 
         return $this;
     }
@@ -162,4 +178,5 @@ class Readlist
 
         return $this;
     }
+
 }

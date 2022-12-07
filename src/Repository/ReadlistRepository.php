@@ -39,28 +39,49 @@ class ReadlistRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Readlist[] Returns an array of Readlist objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * This method allow us to find public readlist  based on number of readlist
+     *
+     * @param integer $nbRealdists
+     * @return array
+     */
+    public function findPublicReadlist(?int $nbRealdists): array
+    {
+        $queryBUilder = $this->createQueryBuilder('r')
+            ->where('r.isPublic = 1')
+            ->orderBy('r.createdAt', 'DESC');
 
-//    public function findOneBySomeField($value): ?Readlist
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+        if ($nbRealdists !== 0 || $nbRealdists !== null) {
+
+            $queryBUilder->setMaxResults($nbRealdists);
+        }
+        return $queryBUilder->getQuery()
+            ->getResult();
+    }
+
+    //    /**
+    //     * @return Readlist[] Returns an array of Readlist objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('r.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Readlist
+    //    {
+    //        return $this->createQueryBuilder('r')
+    //            ->andWhere('r.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

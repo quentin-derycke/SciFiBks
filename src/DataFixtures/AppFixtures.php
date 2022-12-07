@@ -62,9 +62,11 @@ class AppFixtures extends Fixture
     $readlist->setName($this->faker->word())
     ->setDescription($this->faker->paragraph())
     ->setIsFavorite($this->faker->boolean())
-    ->setUser($users[mt_rand(0, count($users) - 1)]);
+    ->setUser($users[mt_rand(0, count($users) - 1)])
+    ->setIsPublic(mt_rand(0,1) == 1 ? true : false);
     for ($k=0; $k < mt_rand(5,15); $k ++){
         $readlist->addBook($books[mt_rand(0, count($books) - 1 )]);
+
     }
     $manager->persist($readlist);
 

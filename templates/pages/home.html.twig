@@ -8,7 +8,23 @@
 			<h1 class="display-4">Sci-FiBks - Home Page</h1>
 			<p class="lead">Sci Fi Books.</p>
 			<hr class="my-4">
-			<a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
 		</div>
-	</div>
+	
+
+	<div class="readlist">
+	 <h2 class='my-4'> Community Lists</h2>
+	  <div class="d-flex gap-4  align-items-center justify-content-center">
+					{%   for readlist in readlists %}
+
+						<div class="card border-warning mb-3" style="max-width: 20rem;">
+                <div class="card-header"> {{readlist.user.fullName}}</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{readlist.name}}</h4>
+                    <p class="card-text">{{readlist.description |slice(0, 100) ~ '...'}}</p>
+                </div>
+                </div>
+					{% endfor %}
+                    </div>
+					</div>
+					</div>
 {% endblock %}
