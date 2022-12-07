@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Mark;
 use App\Form\BookType;
+use App\Form\MarkType;
 use App\Entity\Readlist;
 use App\Form\ReadlistType;
+use App\Repository\MarkRepository;
 use App\Repository\ReadlistRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,29 +45,64 @@ class ReadlistController extends AbstractController
         ]);
     }
     #[Route('/readlist/public', name: 'readlist.public', methods: ['GET'])]
-public function indexPublic(PaginatorInterface $paginator, ReadlistRepository $repository, Request $request) : Response {
-
-    $readlists = $paginator->paginate($repository->findPublicReadlist(null));
-
-    return $this->render('pages/readlist/index_public.html.twig',[
-        'readlists' => $readlists,
-        $request->query->getInt('page', 1), /*page number*/
-        10 /*limit per page*/
-    ]);
-
-}
-
-
-/**
- * This controller allow to see readlist in  public state visibility
- */
-#[Security("is_granted('ROLE_USER') and readlist.isIsPublic() === true")]
-    #[Route('/readlist/{id}', name: 'readlist.show', methods: ['GET'])]
-    public function show(Readlist $readlist): Response
+    public function indexPublic(PaginatorInterface $paginator, ReadlistRepository $repository, Request $request): Response
     {
-        return $this->render('pages/readlist/show.html.twig',[
-            'readlist' => $readlist
-]);
+
+        $readlists = $paginator->paginate($repository->findPublicReadlist(null));
+
+        return $this->render('pages/readlist/index_public.html.twig', [
+            'readlists' => $readlists,
+            $request->query->getInt('page', 1), /*page number*/
+            10 /*limit per page*/
+        ]);
+    }
+
+
+    /**
+     * This controller allow to see readlist in  public state visibility
+     */
+    #[Security("is_granted('ROLE_USER') and readlist.isIsPublic() === true")]
+    #[Route('/readlist/{id}', name: 'readlist.show', methods: ['GET', 'POST'])]
+    public function show(
+        Readlist $readlist,
+        Request $request,
+        MarkRepository $markRepository,
+        EntityManagerInterface $manager
+    ): Response {
+
+        $mark = new Mark();
+        $form = $this->createForm(MarkType::class, $mark);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $mark->setUser($this->getUser())
+                ->setReadlist($readlist);
+
+            $existingMark = $markRepository->findOneBy([
+                'user' => $this->getUser(),
+                'readlist' => $readlist
+            ]);
+
+            if (!$existingMark) {
+                $manager->persist($mark);
+            } else {
+                $existingMark->setMark(
+                    $form->getData()->getMark()
+                );
+            }
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre note a bien été pris en compte.'
+            );
+            return $this->redirectToRoute('readlist.show', ['id' => $readlist->getId()]);
+        }
+
+        return $this->render('pages/readlist/show.html.twig', [
+            'readlist' => $readlist,
+            'form' => $form->createView()
+        ]);
     }
     /**
      * This controller allow us to create a new readlist 

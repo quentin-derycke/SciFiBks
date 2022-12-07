@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\Book;
+use App\Entity\Mark;
 use App\Entity\User;
 use Faker\Generator;
 use App\Entity\Readlist;
@@ -19,30 +20,28 @@ class AppFixtures extends Fixture
      * @var Generator
      */
     private Generator $faker;
-   
+
 
     public function __construct()
     {
         $this->faker = Factory::create('fr_FR');
-        
     }
     public function load(ObjectManager $manager): void
     {
 
-        
-         // Users
-         $users = [];
-         for($i = 0; $i< 10; $i++) {
+
+        // Users
+        $users = [];
+        for ($i = 0; $i < 10; $i++) {
             $user = new User();
             $user->setFullName($this->faker->name())
-            ->setPseudo(mt_rand(0,1) === 1 ? $this->faker->firstName() : null)
-            ->setEmail($this->faker->email())
-            ->setRoles(['ROLE_USER'])
-            ->setPlainPassword('password');
+                ->setPseudo(mt_rand(0, 1) === 1 ? $this->faker->firstName() : null)
+                ->setEmail($this->faker->email())
+                ->setRoles(['ROLE_USER'])
+                ->setPlainPassword('password');
             $users[] = $user;
             $manager->persist($user);
-            
-                     }
+        }
         // Books
         $books = [];
         for ($i = 0; $i < 50; $i++) {
@@ -50,27 +49,41 @@ class AppFixtures extends Fixture
             $book->setName($this->faker->words(3, true))
                 ->setAuthor($this->faker->name())
                 ->setYear($this->faker->dateTime())
-            ->setResume($this->faker->paragraph())
-            ->setUser($users[mt_rand(0, count($users) - 1)]);
+                ->setResume($this->faker->paragraph())
+                ->setUser($users[mt_rand(0, count($users) - 1)]);
             $books[] = $book;
             $manager->persist($book);
         }
 
         // ReadList
+        $readlists = [];
         for ($i = 0; $i < 25; $i++) {
-    $readlist = new Readlist();
-    $readlist->setName($this->faker->word())
-    ->setDescription($this->faker->paragraph())
-    ->setIsFavorite($this->faker->boolean())
-    ->setUser($users[mt_rand(0, count($users) - 1)])
-    ->setIsPublic(mt_rand(0,1) == 1 ? true : false);
-    for ($k=0; $k < mt_rand(5,15); $k ++){
-        $readlist->addBook($books[mt_rand(0, count($books) - 1 )]);
-
-    }
-    $manager->persist($readlist);
-
+            $readlist = new Readlist();
+            $readlist->setName($this->faker->word())
+                ->setDescription($this->faker->paragraph())
+                ->setIsFavorite($this->faker->boolean())
+                ->setUser($users[mt_rand(0, count($users) - 1)])
+                ->setIsPublic(mt_rand(0, 1) == 1 ? true : false);
+            for ($k = 0; $k < mt_rand(5, 15); $k++) {
+                $readlist->addBook($books[mt_rand(0, count($books) - 1)]);
+            }
+            $readlists[] = $readlist;
+            $manager->persist($readlist);
         }
+
+        // Marks 
+
+        foreach ($readlists as $readlist) {
+            for ($i = 0; $i < mt_rand(0, 4); $i++) {
+                $mark = new Mark();
+                $mark->setMark(mt_rand(1, 5))
+                    ->setUser($users[mt_rand(0, count($users) - 1)])
+                    ->setReadlist($readlist);
+
+                $manager->persist($mark);
+            }
+        }
+
 
         $manager->flush();
     }

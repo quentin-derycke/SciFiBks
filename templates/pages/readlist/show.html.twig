@@ -1,28 +1,61 @@
 {% extends "base.html.twig" %}
 
-{% block title %} SF-Bks {{readlist.name}}
+{% block title %}
+	SF-Bks
+	{{readlist.name}}
 {% endblock %}
 {% block body %}
-<div class="container">
-<h1 class="mt-4">{{readlist.name}}</h1>
-<div><span class="badge bg-primary ">Crée le {{readlist.createdAt | date('d/m/Y')}} </span>
-</div>
+	<div class="container">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{message}}
+			</div>
+		{% endfor %}
+		<h1 class="mt-4">
+			{{readlist.name}}
+		</h1>
+		<p>
+			Cette liste est noté en moyenne
+			{{readlist.average}}
+		</p>
 
-<div class="mt-2">{{readlist.description |raw }}</div>
+		<div>
+			<span class="badge bg-primary ">
+				Crée le
+				{{readlist.createdAt | date('d/m/Y')}}
+			</span>
+		</div>
 
-<div class="gap-4 row mt-4  align-items-center justify-content-center">
-{% for book in readlist.books %}
-<div class="card border-dark mb-3" style="max-width: 20rem;">
-  <div class="card-header"> Livre</div>
-  <div class="card-body">
-    <h4 class="card-title">{{book.name}}</h4>
-        <h6 class="card-subtitle text-muted">{{book.author}}</h6>
-    <p class="card-text">{{book.resume}}</p>
-    <span class="badge bg-light"> Published at :{{book.year|date('d/m/Y') }}</span>
-  </div>
-</div>
-{% endfor %}
-</div>
-</div>
+		<div class="mt-2">
+			{{readlist.description |raw }}
+		</div>
 
-{% endblock %}
+		<div class="gap-4 row mt-4  align-items-center justify-content-center">
+			{% for book in readlist.books %}
+				<div class="card border-dark mb-3" style="max-width: 20rem;">
+					<div class="card-header">
+						Livre
+					</div>
+					<div class="card-body">
+						<h4 class="card-title">
+							{{book.name}}
+						</h4>
+						<h6 class="card-subtitle text-muted">
+							{{book.author}}
+						</h6>
+						<p class="card-text">
+							{{book.resume}}
+						</p>
+						<span class="badge bg-light">
+							Published at :
+							{{book.year|date('d/m/Y') }}
+						</span>
+					</div>
+					<div class="mark"></div>
+				</div>
+			{% endfor %}
+			{{ form(form) }}
+			</div>
+
+		</div>
+	{% endblock %}
